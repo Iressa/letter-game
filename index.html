@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <style>
+.invisible {
+    color: "white";
+}
+        </style>
+        <script>
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVÄÖ'.split('');
+
+            const themes = [
+                "Kala", "Auton merkki", "Näyttelijä", "Eläin", "Kaupunki", "Ruoka", "Kukka", "Urheilulaji", "Ammatti", "Kirja",
+                "Väri", "Maa", "Muusikko", "Juhla", "Kasvi", "Auto", "Rakennus", "Elokuva", "Bändi", "Tietokonepeli", "Instrumentti",
+                "Lintu", "Matkakohde", "Tanssi", "Maalaus", "Instrumentti", "Vuori", "Kaupunki Euroopassa", "Laji", "Järvi", "Lukioaine",
+                "Säätila", "Sankari", "Kirjailija", "Planeetta", "Joki", "Huonekalut", "Vaatetyyli", "Aasia maa", "Kulkuneuvo", "Sotilasarvo",
+                "Kukka", "Peli", "Koira", "Merieläin", "Kotieläin", "Sana", "Ääni", "Ravintola", "Kahvila", "Laite",
+                "Hahmo", "Taiteilija", "Koriste", "Vesiputous", "Ranta", "Valtio", "Maakunta", "Talo", "Musiikkityyli", "Ajan yksikkö",
+                "Metsä", "Juna", "Kulttuuri", "Lääke", "Järjestö", "Maailmanperintökohde", "Historiallinen tapahtuma", "Maa Afrikassa",
+                "Aurinko", "Kieli", "Koti", "Keittiöväline", "Juhlaruoka", "Poliittinen puolue", "Kansallinen juhlapäivä", "Suosittu urheilija",
+                "Vuoristo", "Laulaja", "Opiskeluala", "Harrastus", "Kalalaji", "Valtionpäämies", "Meri", "Muoti", "Keitto", "Teknologiayritys"
+            ];
+
+            const moreThemes = [
+                "Pääkaupunki",    // Capital city
+                "Kauhuelokuva",   // Horror movie
+                "Elokuvasarja",   // Movie series
+                "Näyttelijä",     // Actor
+                "Ohjaaja"        // Director
+            ];
+
+            const allThemes = themes.concat(moreThemes);
+
+            function getRandomElement(array) {
+                const randomIndex = Math.floor(Math.random() * array.length);
+                const randomElement = array[randomIndex];
+                return randomElement;
+            }
+
+            function displayPhrase() {
+                document.getElementById("letter").innerHTML = getRandomElement(alphabet);
+            }
+
+            function updateTheme() {
+                document.getElementById("theme").innerHTML = getRandomElement(allThemes);
+            }
+
+            function makeInvisible() {
+                document.getElementById("letter").style.color = "white";
+            }
+
+            function makeVisible() {
+                document.getElementById("letter").style.color = "black";
+            }
+
+            let toggle = false;
+
+            function update() {
+                if (toggle) {
+                    makeVisible();
+                    displayPhrase();
+                } else {
+                    makeInvisible();
+                    updateTheme();
+                }
+
+
+                toggle = !toggle;
+            }
+
+        </script>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <h1 id="letter" style="font-size: 200px">A</h1>
+            <p id="theme" style="font-size: 40px;">Teema</p>
+        </div>
+
+        <button type="button" onclick="update()">Nappula</button>
+    </body>
+</html>
