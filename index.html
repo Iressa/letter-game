@@ -156,14 +156,6 @@
                 document.getElementById("theme").innerHTML = getRandomElement(allThemes[language]);
             }
 
-            function makeInvisible() {
-                document.getElementById("letter").style.color = "white";
-            }
-
-            function makeVisible() {
-                document.getElementById("letter").style.color = "black";
-            }
-
             function setVisibility() {
                 if (state.name === GameState.LETTER_HIDDEN.name) {
                     document.getElementById("letter").style.color = "white";
@@ -195,11 +187,18 @@
 
             players = [];
 
-            function addPlayer(string) {
+            function addPlayer() {
+                // Create player object.
                 const playerName = document.getElementById("playerName").value;
                 players.push(new Player(playerName, getRandomElementAndRemove(playerColors)))
+
+                // Add to start page list.
+                const listItem = document.createElement("li");
+                listItem.innerHTML = playerName;
+                document.getElementById("playerList").appendChild(listItem);
             }
 
+            // List of possible player colors.
             let playerColors = [
                 "FAE7EB",
                 "E0D4E7",
@@ -229,12 +228,13 @@
                     document.getElementById("players").appendChild(player);
                 })
 
-                const player = document.createElement("div")
-                player.appendChild(document.createTextNode("Skip"))
-                player.style.height = "10%";
-                player.style.backgroundColor = "#FFDAB9";
+                const skip = document.createElement("div")
+                skip.appendChild(document.createTextNode("Skip"))
+                skip.style.height = "10%";
+                skip.style.backgroundColor = "#FFDAB9";
+                skip.onclick = update;
 
-                document.getElementById("players").appendChild(player);
+                document.getElementById("players").appendChild(skip);
             }
 
             function start() {
@@ -243,6 +243,7 @@
 
             }
 
+            // Update the game state.
             function update() {
                 if (state.name === GameState.STARTUP.name) {
                     start();
@@ -265,16 +266,18 @@
     <body>
         <div id="startup" style="display: flex; flex-direction: column; height: 100%;">
             <h1>Letter Game</h1>
-            <div onclick="update()">Start</div>
 
-            <input type="text" id="playerName" name="name" required minlength="4" maxlength="8" size="10" />
+            <ul id="playerList"></ul>
+            <input type="text" id="playerName" name="name" required minlength="3" maxlength="15" size="10" />
             <button type="button" onclick="addPlayer()">Lisää Pelaaja</button>
+
+            <div onclick="update()" style="background-color: red;">Start</div>
         </div>
         <div id="main" style="display: none; height: 100%;">
             <div id="game" style="width: 80%;">
                 <div style="text-align: center;">
-                    <h1 id="letter" style="font-size: 300px; margin-block: 0em;">A</h1>
-                    <p id="theme" style="font-size: 40px;">Teema</p>
+                    <h1 id="letter" style="font-size: 70em; margin-block: 0em;">A</h1>
+                    <p id="theme" style="font-size: 10em;">Teema</p>
                 </div>
 
                 <div>
