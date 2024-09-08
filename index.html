@@ -6,29 +6,134 @@
 }
         </style>
         <script>
+            class GameState {
+                static LETTER_HIDDEN = new GameState("LETTER_HIDDEN");
+                static LETTER_SHOWN = new GameState("LETTER_SHOWN");
+                static STARTUP = new GameState("STARTUP");
+
+                constructor(name) {
+                    this.name = name;
+                }
+
+                setNext(state) {
+                    this.nextState = state;
+                }
+
+                next() {
+                    return this.nextState;
+                }
+            }
+
+            // Initialize enums.
+            GameState.STARTUP.setNext(GameState.LETTER_HIDDEN);
+            GameState.LETTER_HIDDEN.setNext(GameState.LETTER_SHOWN);
+            GameState.LETTER_SHOWN.setNext(GameState.LETTER_HIDDEN);
+
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVÄÖ'.split('');
 
-            const themes = [
-                "Kala", "Auton merkki", "Näyttelijä", "Eläin", "Kaupunki", "Ruoka", "Kukka", "Urheilulaji", "Ammatti", "Kirja",
-                "Väri", "Maa", "Muusikko", "Juhla", "Kasvi", "Auto", "Rakennus", "Elokuva", "Bändi", "Tietokonepeli", "Instrumentti",
-                "Lintu", "Matkakohde", "Tanssi", "Maalaus", "Instrumentti", "Vuori", "Kaupunki Euroopassa", "Laji", "Järvi", "Lukioaine",
-                "Säätila", "Sankari", "Kirjailija", "Planeetta", "Joki", "Huonekalut", "Vaatetyyli", "Aasia maa", "Kulkuneuvo", "Sotilasarvo",
-                "Kukka", "Peli", "Koira", "Merieläin", "Kotieläin", "Sana", "Ääni", "Ravintola", "Kahvila", "Laite",
-                "Hahmo", "Taiteilija", "Koriste", "Vesiputous", "Ranta", "Valtio", "Maakunta", "Talo", "Musiikkityyli", "Ajan yksikkö",
-                "Metsä", "Juna", "Kulttuuri", "Lääke", "Järjestö", "Maailmanperintökohde", "Historiallinen tapahtuma", "Maa Afrikassa",
-                "Aurinko", "Kieli", "Koti", "Keittiöväline", "Juhlaruoka", "Poliittinen puolue", "Kansallinen juhlapäivä", "Suosittu urheilija",
-                "Vuoristo", "Laulaja", "Opiskeluala", "Harrastus", "Kalalaji", "Valtionpäämies", "Meri", "Muoti", "Keitto", "Teknologiayritys"
-            ];
-
-            const moreThemes = [
+            const themes_fi = [
+                "Kala",
+                "Auton merkki",
+                "Näyttelijä",
+                "Eläin",
+                "Kaupunki",
+                "Ruoka",
+                "Kukka",
+                "Urheilulaji",
+                "Ammatti",
+                "Kirja",
+                "Maa",
+                "Muusikko",
+                "Juhla",
+                "Kasvi",
+                "Rakennus",
+                "Elokuva",
+                "Bändi",
+                "Tietokonepeli",
+                "Instrumentti",
+                "Lintu",
+                "Matkakohde",
+                //"Tanssi",
+                "Maalaus",
+                "Kaupunki Euroopassa",
+                //"Laji",
+                "Järvi",
+                "Lukioaine",
+                "Säätila",
+                "Sankari",
+                "Kirjailija",
+                //"Planeetta",
+                "Joki",
+                "Huonekalu",
+                "Vaate",
+                "Aasian maa",
+                "Kulkuneuvo",
+                //"Sotilasarvo",
+                //"Peli",
+                "Koirarotu",
+                "Merieläin",
+                "Kotieläin (ei lemmikki)",
+                "Adjektiivi",
+                "Verbi",
+                "Ääni",
+                "Ravintola",
+                "Kahvila",
+                "Sähkölaite",
+                "Työkalu",
+                "Keittiöväline",
+                "Askarteluväline",
+                "Elokuvahahmo",
+                "Kirjan hahmo",
+                "Taiteilija",
+                "Koriste",
+                "Valtio",
+                "Rakennus",
+                "Historiallinen rakennus",
+                "Musiikkityyli",
+                //"Kulttuuri",
+                "Lääke",
+                "Järjestö",
+                "Maailmanperintökohde",
+                "Historiallinen tapahtuma",
+                "Maa Afrikassa",
+                "Kieli",
+                //"Koti",
+                "Juhlaruoka",
+                "Poliittinen puolue",
+                "Juhlapäivä",
+                "Urheilija",
+                "Laulaja",
+                "Opiskeluala",
+                "Harrastus",
+                "Valtionpäämies",
+                "Keitto",
+                "Teknologiayritys",
                 "Pääkaupunki",    // Capital city
                 "Kauhuelokuva",   // Horror movie
                 "Elokuvasarja",   // Movie series
                 "Näyttelijä",     // Actor
-                "Ohjaaja"        // Director
+                "Ohjaaja"         // Director
             ];
+            
+            const themes_sv = [
+                "Fisk"
+            ]
+            
+            const themes_en = [
+                "Fish"
+            ]
 
-            const allThemes = themes.concat(moreThemes);
+            const allThemes = {
+                "fi": themes_fi,
+                "sv": themes_sv,
+                "en": themes_en
+            };
+
+            // Language of the game.
+            let language = "fi";
+
+            // Game state.
+            let state = GameState.STARTUP;
 
             function getRandomElement(array) {
                 const randomIndex = Math.floor(Math.random() * array.length);
@@ -36,12 +141,12 @@
                 return randomElement;
             }
 
-            function displayPhrase() {
+            function updateLetter() {
                 document.getElementById("letter").innerHTML = getRandomElement(alphabet);
             }
 
             function updateTheme() {
-                document.getElementById("theme").innerHTML = getRandomElement(allThemes);
+                document.getElementById("theme").innerHTML = getRandomElement(allThemes[language]);
             }
 
             function makeInvisible() {
@@ -52,29 +157,57 @@
                 document.getElementById("letter").style.color = "black";
             }
 
-            let toggle = false;
+            function setVisibility() {
+                if (state.name === GameState.LETTER_HIDDEN.name) {
+                    document.getElementById("letter").style.color = "white";
+                    document.getElementById("next").style.display = "flex";
+                    document.getElementById("players").style.display = "none";
+                } else {
+                    document.getElementById("letter").style.color = "black";
+                    document.getElementById("next").style.display = "none";
+                    document.getElementById("players").style.display = "flex";
+                }
+            }
+
+            function setLanguage(string) {
+                language = string;
+            }
 
             function update() {
-                if (toggle) {
-                    makeVisible();
-                    displayPhrase();
+                if (state.name === GameState.LETTER_SHOWN.name) {
+                    updateLetter();
                 } else {
-                    makeInvisible();
                     updateTheme();
                 }
 
+                setVisibility();
 
-                toggle = !toggle;
+                state = state.next();
             }
 
         </script>
     </head>
     <body>
-        <div style="text-align: center;">
-            <h1 id="letter" style="font-size: 200px">A</h1>
-            <p id="theme" style="font-size: 40px;">Teema</p>
-        </div>
+        <div id="main" style="display: flex;">
+            <div id="game" style="width: 80%;">
+                <div style="text-align: center;">
+                    <h1 id="letter" style="font-size: 300px; margin-block: 0em;">A</h1>
+                    <p id="theme" style="font-size: 40px;">Teema</p>
+                </div>
 
-        <button type="button" onclick="update()">Nappula</button>
+                <div>
+                    <button type="button" onclick="setLanguage('fi')">FI</button>
+                    <button type="button" onclick="setLanguage('sv')">SV</button>
+                    <button type="button" onclick="setLanguage('en')">EN</button>
+                </div>
+            </div>
+            <div id="players" style="width: 20%; display: none; flex-direction: column;">
+                <div style="background-color: #91DDCF; height: 50%;" onclick="update()">Player 1</div>
+                <div style="background-color: #E8C5E5; height: 50%;" onclick="update()">Player 2</div>
+            </div>
+            <div id="next" style="width: 20%; display: flex; flex-direction: column;">
+                <div style="background-color: #91DDCF; height: 100%;" onclick="update()">Next</div>
+            </div>
+        </div>
     </body>
 </html>
