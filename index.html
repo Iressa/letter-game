@@ -141,6 +141,13 @@
                 return randomElement;
             }
 
+            function getRandomElementAndRemove(array) {
+                const randomIndex = Math.floor(Math.random() * array.length);
+                const randomElement = array[randomIndex];
+                array.splice(randomIndex, 1);
+                return randomElement;
+            }
+
             function updateLetter() {
                 document.getElementById("letter").innerHTML = getRandomElement(alphabet);
             }
@@ -173,22 +180,97 @@
                 language = string;
             }
 
-            function update() {
-                if (state.name === GameState.LETTER_SHOWN.name) {
-                    updateLetter();
-                } else {
-                    updateTheme();
+            class Player {
+
+                constructor(name, color) {
+                    this.name = name;
+                    this.color = color;
+                    this.score = 0;
                 }
 
-                setVisibility();
+                incrementScore() {
+                    this.score = this.score + 1;
+                }
+            }
+
+            players = [];
+
+            function addPlayer(string) {
+                const playerName = document.getElementById("playerName").value;
+                players.push(new Player(playerName, getRandomElementAndRemove(playerColors)))
+            }
+
+            let playerColors = [
+                "FAE7EB",
+                "E0D4E7",
+                "DBEEF7",
+                "BDD2E4",
+                "EECEDA",
+                "CCDCEB"
+            ];
+
+            function drawPlayers() {
+                document.getElementById("players").innerHTML = "";
+
+                const number_of_players = players.length;
+                const height = 90 / (number_of_players);
+
+                players.forEach(p => {
+                    const player = document.createElement("div")
+                    player.appendChild(document.createTextNode(p.name))
+                    player.appendChild(document.createTextNode(p.score))
+                    player.style.height = height + "%";
+                    player.style.backgroundColor = p.color;
+                    player.onclick = function () {
+                        p.incrementScore();
+                        update();
+                    }
+
+                    document.getElementById("players").appendChild(player);
+                })
+
+                const player = document.createElement("div")
+                player.appendChild(document.createTextNode("Skip"))
+                player.style.height = "10%";
+                player.style.backgroundColor = "#FFDAB9";
+
+                document.getElementById("players").appendChild(player);
+            }
+
+            function start() {
+                document.getElementById("startup").style.display = "none";
+                document.getElementById("main").style.display = "flex";
+
+            }
+
+            function update() {
+                if (state.name === GameState.STARTUP.name) {
+                    start();
+                }
+
+                if (state.name === GameState.LETTER_SHOWN.name) {
+                    updateTheme();
+                    drawPlayers();
+                } else {
+                    updateLetter();
+                    drawPlayers();
+                }
 
                 state = state.next();
+                setVisibility();
             }
 
         </script>
     </head>
     <body>
-        <div id="main" style="display: flex;">
+        <div id="startup" style="display: flex; flex-direction: column; height: 100%;">
+            <h1>Letter Game</h1>
+            <div onclick="update()">Start</div>
+
+            <input type="text" id="playerName" name="name" required minlength="4" maxlength="8" size="10" />
+            <button type="button" onclick="addPlayer()">Lisää Pelaaja</button>
+        </div>
+        <div id="main" style="display: none; height: 100%;">
             <div id="game" style="width: 80%;">
                 <div style="text-align: center;">
                     <h1 id="letter" style="font-size: 300px; margin-block: 0em;">A</h1>
@@ -202,8 +284,6 @@
                 </div>
             </div>
             <div id="players" style="width: 20%; display: none; flex-direction: column;">
-                <div style="background-color: #91DDCF; height: 50%;" onclick="update()">Player 1</div>
-                <div style="background-color: #E8C5E5; height: 50%;" onclick="update()">Player 2</div>
             </div>
             <div id="next" style="width: 20%; display: flex; flex-direction: column;">
                 <div style="background-color: #91DDCF; height: 100%;" onclick="update()">Next</div>
